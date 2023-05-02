@@ -1,0 +1,25 @@
+author			= "Coucoul38";
+onLoadName		= "Deathmatch";
+onLoadMission	= "First at 20 kills win.";
+loadScreen		= "img.jpg";
+
+class Header
+{
+	gameType =  DM;
+	minPlayers =  1;
+	maxPlayers = 10;
+};
+
+respawn = "BASE";
+saving = 0; //cant save the mission
+skipLobby = 0;
+
+class CfgDebriefing
+{
+	class endDM
+	{
+		title = "End of game";
+		subtitle  = "Someone got 20 kills."; //This will be overwritten, but if you don't put a subtitle, it will only show up in the ending screen, not on the player's UI while in game (notification of win or smth idk how to explain)
+		pictureBackground = "credits.jpg";
+	};
+};
