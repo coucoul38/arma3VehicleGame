@@ -1,11 +1,11 @@
 author			= "Coucoul38";
-onLoadName		= "Deathmatch";
-onLoadMission	= "First at 20 kills win.";
+onLoadName		= "Vehicle Game";
+onLoadMission	= "Get a kill with every vehicle.";
 loadScreen		= "img.jpg";
 
 class Header
 {
-	gameType =  DM;
+	gameType =  VG;
 	minPlayers =  1;
 	maxPlayers = 10;
 };
