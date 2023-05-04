@@ -24,18 +24,31 @@ _findClassname
 
 };
 
+
 fnc_c38_changePlayerVehicle = {
+
 	_player = _this;
-	
+	_turret = (vehicle _player) unitTurret _player;
+	_posTurret = eyeDirection vehicle _player;
 	_playerUnits = units player;
 	_bot = _playerUnits select 1;
+	private _veh = Null;
 	
 	deleteVehicle vehicle _player;
 	
 	//CREATE new vehicle
 	_vehicleDisplayName = vehiclesList select _playerScore;
-	_vehicleClassName = _vehicleDisplayName call fnc_g_findClassname;
-	_veh = _vehicleClassName createVehicle _vehPosition;
+	
+	//Check if the className is given
+	if(isClass (configFile >> "cfgVehicles" >> _vehicleDisplayName)) then 
+	{
+		_vehicleClassName = _vehicleDisplayName;
+		_veh = _vehicleClassName createVehicle position _player;
+	} else {
+		_vehicleClassName = _vehicleDisplayName call fnc_g_findClassname;
+		_veh = _vehicleClassName createVehicle position _player;
+	};
+
 	_veh lock true;
 	
 	//MOVE units in vehicle
@@ -46,10 +59,13 @@ fnc_c38_changePlayerVehicle = {
 		_x disableAI "FSM";
 		_x setBehaviour "CARELESS";
 	} forEach crew _veh;
+	
+	//ROTATE turret
+	//_veh lockCameraTo [_posTurret, _veh unitTurret _player, true];
 };
 
 if(isServer) then {
-	vehiclesList = ["M2A3","M1134"];
+	vehiclesList = ["M2A3","M1134","PRACS_M163_VADS"];
 	activeControls = [];
 	control = 2000;
 	west setFriend [west, 0];
@@ -63,6 +79,7 @@ if(isServer) then {
 		//CREATE the vehicle
 		_vehicleDisplayName = vehiclesList select 0;
 		_vehicleClassName = _vehicleDisplayName call fnc_g_findClassname;
+		hint _vehicleClassName;
 		_veh = _vehicleClassName createVehicle position _x;
 		_veh lock true;
 		
@@ -102,11 +119,19 @@ if(isServer) then {
 		_x addEventHandler ["killed", 
 		{		
 			if (_this select 0 != _this select 1) then {
-				hint typeOf(vehicle (_this select 1));
+				//hint typeOf(vehicle (_this select 1));
 				[control, _this select 0, name(_this select 1), typeOf(vehicle (_this select 1)), (_this select 0)distance(_this select 1)] execVM "killFeed.sqf";};
 				call unitKilled;
 		}];
 		
 		//_x addEventHandler ["killed", unitKilled];
 	} forEach allUnits;
+};
+
+onEachFrame {
+	{
+		_beg = ASLToAGL eyePos vehicle _x;
+		_endE = (_beg vectorAdd (eyeDirection vehicle _x vectorMultiply 100));
+		drawLine3D [ _beg, _endE, [0,1,0,1]];
+	}forEach allPlayers;
 };
