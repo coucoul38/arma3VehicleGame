@@ -29,15 +29,16 @@ fnc_c38_changePlayerVehicle = {
 
 	_player = _this;
 	_turret = (vehicle _player) unitTurret _player;
-	_posTurret = eyeDirection vehicle _player;
+	_posTurret = screenToWorld [0.5, 0.5];
 	_playerUnits = units player;
 	_bot = _playerUnits select 1;
+	_bot allowDamage false;
 	private _veh = Null;
 	
 	deleteVehicle vehicle _player;
 	
 	//CREATE new vehicle
-	_vehicleDisplayName = vehiclesList select _playerScore;
+	_vehicleDisplayName = vehiclesList select _playerKills;
 	
 	//Check if the className is given
 	if(isClass (configFile >> "cfgVehicles" >> _vehicleDisplayName)) then 
@@ -65,10 +66,12 @@ fnc_c38_changePlayerVehicle = {
 };
 
 if(isServer) then {
-	vehiclesList = ["M2A3","M1134","PRACS_M163_VADS"];
+	//Sparky_JSDF_Overhaul_gac_JGSDF_AAV
+	vehiclesList = ["AAVP7A1","PRACS_FV107","BTR-80","BTR-80A","rhs_bmp1_vdv","Sparky_JSDF_Overhaul_JSDF_JGSDF_Type61","rhsusf_stryker_m1134_d","PRACS_M60A3","Sparky_JSDF_Overhaul_JSDF_JGSDF_Type74","RHS_M2A3","rhs_t72ba_tv","AMF_VBCI_CE_01_F","Type89IFV", "Type87RCV","Sparky_JSDF_Overhaul_JSDF_JGSDF_Type61","B_AMF_TANK_01","M1A1AIM"]; //if a vehicle is not spawning, put its configName instead of its displayName
 	activeControls = [];
 	control = 2000;
 	west setFriend [west, 0];
+	west setFriend [resistance, 0];
 
 	
 	//spawn 1st vehicle
@@ -102,8 +105,8 @@ if(isServer) then {
 			} forEach units(vehicle(_this select 0));
 			
 			//_x addPlayerScores [2,0,0,0,0]; //Add 1 kill to the player (2 because killing a friendly is -1 (this is deathmatch, everybody is on the same side))
-			_playerScore = score _x;
-			if (_playerScore == 20) then 
+			_playerKills = getPlayerScores _x select 0;
+			if (_playerKills == 20) then 
 			{ 
 				"endDM" setDebriefingText ["End of match", name _x + " got 20 kills.", "Winner: " + name _x]; // overwrites the debriefing text
 				"endDM" call BIS_fnc_endMission;
@@ -128,10 +131,10 @@ if(isServer) then {
 	} forEach allUnits;
 };
 
-onEachFrame {
+/*onEachFrame {
 	{
 		_beg = ASLToAGL eyePos vehicle _x;
 		_endE = (_beg vectorAdd (eyeDirection vehicle _x vectorMultiply 100));
 		drawLine3D [ _beg, _endE, [0,1,0,1]];
 	}forEach allPlayers;
-};
+};*/
